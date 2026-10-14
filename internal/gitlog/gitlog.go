@@ -217,7 +217,22 @@ func git(dir string, args ...string) (string, error) {
 		if msg == "" {
 			msg = err.Error()
 		}
-		return "", fmt.Errorf("git %s: %s", args[0], msg)
+		return "", fmt.Errorf("git %s: %s", subcommand(args), msg)
 	}
 	return stdout.String(), nil
+}
+
+// subcommand names the git subcommand in args, skipping leading config flags
+// (-c and its value), so error messages read "git log: ..." not "git -c: ...".
+func subcommand(args []string) string {
+	for i := 0; i < len(args); i++ {
+		if args[i] == "-c" {
+			i++ // skip the config value
+			continue
+		}
+		if !strings.HasPrefix(args[i], "-") {
+			return args[i]
+		}
+	}
+	return args[0]
 }
