@@ -173,9 +173,9 @@ func TestDetectProvenance(t *testing.T) {
 		},
 		{
 			name:    "footer only",
-			message: "Fix flaky test\n\n\U0001F916 Generated with Claude Code",
+			message: "Fix flaky test\n\n\U0001F916 Generated with Codex",
 			want: Provenance{
-				Agent:  "Claude",
+				Agent:  "Codex",
 				Source: SourceFooter,
 			},
 		},
