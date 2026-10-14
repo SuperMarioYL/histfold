@@ -1,0 +1,305 @@
+{
+  "schema": 3,
+  "name": "Histfold",
+  "github": "https://github.com/SuperMarioYL/histfold",
+  "host": "histfold.lei6393.com",
+  "palette": "auto",
+  "lang": {
+    "primary": "zh",
+    "toggle": true
+  },
+  "meta": {
+    "visual_profile": "neon-particle",
+    "content_version": "v0.1.0",
+    "demo_source": "docs/demo-results.json"
+  },
+  "hero": {
+    "eyebrow": {
+      "zh": "把 Agent 时代的 git 历史，折叠成可评审的任务变更集。",
+      "en": "Fold agent-era git history into reviewable task changesets."
+    },
+    "headline": {
+      "zh": "评审一个 Agent 任务，\n而不是几十个微型提交。",
+      "en": "Review one agent task,\nnot dozens of micro-commits."
+    },
+    "sub": {
+      "zh": "Histfold 关联会话日志、触碰路径与 Agent trailer，从已经写好的历史中重建任务单元——严格只读，单一静态二进制，零配置。",
+      "en": "Histfold correlates session logs, touched paths and agent trailers to rebuild task units from history that is already written — strictly read-only, one static binary, zero configuration."
+    },
+    "href": "https://github.com/SuperMarioYL/histfold",
+    "cta": {
+      "zh": "开始使用",
+      "en": "Get started"
+    },
+    "ctaGithub": {
+      "zh": "在 GitHub 查看",
+      "en": "View on GitHub"
+    }
+  },
+  "scene": {
+    "kind": "neon-graph",
+    "caption": {
+      "zh": "首屏为示意性的粒子场景；实际运行输出见下方实录。",
+      "en": "An illustrative particle scene; the recorded run appears below."
+    },
+    "fallback": "/assets/presentation/scene-dark.svg",
+    "fallbackLight": "/assets/presentation/scene-light.svg"
+  },
+  "advantages": [
+    {
+      "title": {
+        "zh": "回溯式折叠",
+        "en": "Retroactive fold"
+      },
+      "body": {
+        "zh": "关联三种相互独立的信号——会话日志、触碰路径、Agent trailer——从已经写好的历史中重建任务单元。不需要 hook，也不改写提交。",
+        "en": "Correlates three independent signals — session logs, touched paths and agent trailers — to rebuild task units from history that is already written. No hooks, no history rewriting."
+      },
+      "chips": [
+        "session logs",
+        "touched paths",
+        "trailers"
+      ]
+    },
+    {
+      "title": {
+        "zh": "严格只读",
+        "en": "Strictly read-only"
+      },
+      "body": {
+        "zh": "提交本身绝不被改动，变更集只是覆盖在提交之上的一层视图。写入的只有 histfold.html 和打到 stdout 的内容。",
+        "en": "Commits are never touched; a changeset is just a lens over them. The only writes are histfold.html and whatever is printed to stdout."
+      },
+      "chips": [
+        "zero git mutation",
+        "no config file"
+      ]
+    },
+    {
+      "title": {
+        "zh": "一个静态二进制",
+        "en": "One static binary"
+      },
+      "body": {
+        "zh": "Go 标准库实现，调用系统 git，没有服务进程。产出自包含的 histfold.html 时间线，离线打开，零外部请求。",
+        "en": "Built on the Go standard library and the system git binary, with no servers or daemons. It writes a self-contained histfold.html timeline that opens offline with zero external requests."
+      },
+      "chips": [
+        "Go 1.24",
+        "works offline"
+      ]
+    }
+  ],
+  "story": {
+    "intro": {
+      "title": {
+        "zh": "git 历史，不再是可评审的记录",
+        "en": "Git history is no longer a reviewable record"
+      },
+      "body": {
+        "zh": "过去人类用一个深思熟虑的提交交付一项任务；现在同一个任务会以几十个微型提交的形式到达，其间穿插着人工修改，并且没有机器可读的任务归因。翻 git log 重建不出任何东西，squash 又会改写你正想评审的那份记录。Histfold 做的是回溯式折叠：提交不动，变更集是任务级的视图。",
+        "en": "A task a human would once have shipped as one deliberate commit now arrives as dozens of micro-commits, interleaved with human edits and carrying no machine-readable task attribution. Scrolling git log reconstructs nothing, and squashing rewrites the very record you are trying to review. Histfold folds retroactively: commits stay untouched, and changesets are the task-level view."
+      }
+    },
+    "sections": [
+      {
+        "title": {
+          "zh": "折叠如何发生",
+          "en": "How a fold happens"
+        },
+        "body": {
+          "zh": "histfold fold 读取 git log 与本地会话日志，把每个提交与归因证据匹配：落在会话活动窗口内且路径重叠记 90% 置信度，仅落在窗口内记 70%，只有 trailer 记 50%，纯时间间隔聚类记 20%。每个变更集携带意图、Agent 与模型、文件数和评审状态。",
+          "en": "histfold fold reads git log and local session logs, then matches every commit against attribution evidence: inside a session's activity window with overlapping paths scores 90% confidence, window-only scores 70%, trailers-only 50%, and pure time-gap clustering 20%. Each changeset carries intent, agent and model, files, and review status."
+        },
+        "image": {
+          "light": "/assets/presentation/process-light.svg",
+          "dark": "/assets/presentation/process-dark.svg",
+          "alt": {
+            "zh": "折叠流程：提交流与会话日志进入关联阶段，按置信度 90%、70%、50%、20% 归因，输出带意图与评审状态的变更集；人工提交原样穿过，不被强行归因。",
+            "en": "The fold pipeline: the commit stream and session logs enter correlation, commits are attributed with 90%, 70%, 50% or 20% confidence, and changesets come out with intent and review status; human commits pass through unattributed."
+          },
+          "mobile": {
+            "light": "/assets/presentation/process-mobile-light.svg",
+            "dark": "/assets/presentation/process-mobile-dark.svg"
+          }
+        }
+      },
+      {
+        "title": {
+          "zh": "一个二进制，三个内部包",
+          "en": "One binary, three packages"
+        },
+        "body": {
+          "zh": "ingest 层调用系统 git 并适配 Claude Code 会话日志；fold 引擎是对这些数据的纯关联函数，折叠策略只存在于这一处；render 层打印终端表格，并用内嵌模板写出零外部请求的 HTML 时间线。",
+          "en": "The ingest layer shells out to the system git and adapts Claude Code session logs. The fold engine is a pure correlation function over that data — folding policy lives in exactly one place. The render layer prints a terminal table and writes an HTML timeline from an embedded template with zero external requests."
+        },
+        "image": {
+          "light": "/assets/presentation/architecture-light.svg",
+          "dark": "/assets/presentation/architecture-dark.svg",
+          "alt": {
+            "zh": "架构图：histfold 单一二进制内的 ingest、fold、render 三个内部包，左侧读取 git log 与会话日志，右侧输出终端表格与自包含的 histfold.html。",
+            "en": "Architecture: the ingest, fold and render packages inside the histfold binary, reading git log and session logs on the left and writing the terminal table plus a self-contained histfold.html on the right."
+          },
+          "mobile": {
+            "light": "/assets/presentation/architecture-mobile-light.svg",
+            "dark": "/assets/presentation/architecture-mobile-dark.svg"
+          }
+        }
+      },
+      {
+        "title": {
+          "zh": "它读什么、写什么",
+          "en": "What it reads and writes"
+        },
+        "body": {
+          "zh": "读取 git log --numstat（经系统 git）与 ~/.claude/projects/<repo-slug>/*.jsonl 会话日志；写出当前目录的 histfold.html，以及 --json 打到 stdout 的内容。评审状态仅从本地引用推导，全程不发起网络请求。",
+          "en": "Reads git log --numstat (via the system git) and ~/.claude/projects/<repo-slug>/*.jsonl session logs; writes histfold.html in the current directory plus whatever --json prints to stdout. Review status is derived from local refs only — no network requests are made."
+        },
+        "image": {
+          "light": "/assets/presentation/integrations-light.svg",
+          "dark": "/assets/presentation/integrations-dark.svg",
+          "alt": {
+            "zh": "接入图：histfold 从 git log、Claude Code 会话日志与提交 trailer 读取证据，写出终端表格、stdout JSON 与 histfold.html；评审状态只看本地引用，无网络请求。",
+            "en": "Integration map: histfold draws evidence from git log, Claude Code session logs and commit trailers, and writes a terminal table, stdout JSON and histfold.html; review status uses local refs only, with no network requests."
+          },
+          "mobile": {
+            "light": "/assets/presentation/integrations-mobile-light.svg",
+            "dark": "/assets/presentation/integrations-mobile-dark.svg"
+          }
+        }
+      }
+    ],
+    "details": [
+      {
+        "title": {
+          "zh": "读懂置信度",
+          "en": "Reading the confidence"
+        },
+        "body": {
+          "zh": "置信度是所用归因证据中较弱一环的强度：90% 会话窗口加路径重叠，70% 会话窗口，50% 仅提交 trailer，20% 纯时间间隔。意图取自匹配会话的第一条用户提示——任务自己的措辞——没有会话时退回到聚类首个提交的标题。",
+          "en": "A changeset's confidence is the strength of the weakest evidence used to attribute it: 90% session window plus path overlap, 70% session window, 50% trailers only, 20% time gaps. Intent is the matched session's first user prompt — the task's own words — falling back to the cluster-head commit subject."
+        },
+        "code": "histfold commits | head -n 10"
+      },
+      {
+        "title": {
+          "zh": "v0.1 的边界",
+          "en": "v0.1 scope"
+        },
+        "body": {
+          "zh": "折叠刻意保持单人模式：只关联本机可找到的来源，目前仅适配 Claude Code 的 JSONL 会话日志；其他 Agent 运行时靠 trailer 与时间间隔折叠，置信度更低。跨贡献者折叠需要先解决会话日志共享，它在路线图上，不是承诺。平台支持 macOS 与 Linux。",
+          "en": "Folding is deliberately single-player: it correlates provenance found on the local machine, and only Claude Code JSONL session logs are adapted today; other agent runtimes fold on trailers and time gaps at lower confidence. Cross-contributor folding needs a story for sharing session logs, so it is roadmap, not promise. Platforms are macOS and Linux."
+        }
+      }
+    ]
+  },
+  "demo": {
+    "title": {
+      "zh": "实录运行",
+      "en": "Recorded run"
+    },
+    "note": {
+      "zh": "以下命令与输出逐字取自 docs/demo-results.json 的运行记录。输入由 demo/seed.sh 生成的合成演示仓库：212 个交错微型提交、8 份 Claude 会话日志、一段仅 trailer 的 Codex 脉冲与人工跟进提交；种子是确定性的，任何机器上都能原样复现。",
+      "en": "Commands and outputs below are copied verbatim from the recorded run in docs/demo-results.json. The input is a synthetic demo repository generated by demo/seed.sh: 212 interleaved micro-commits, eight Claude session logs, one trailer-only Codex burst and human follow-ups. The seed is deterministic and reproduces exactly on any machine."
+    },
+    "source": "https://github.com/SuperMarioYL/histfold/blob/main/docs/demo-results.json",
+    "steps": [
+      {
+        "label": {
+          "zh": "折叠提交流",
+          "en": "Fold the commit stream"
+        },
+        "body": {
+          "zh": "在演示仓库中运行 histfold fold：212 个提交折叠为 9 个变更集，同时写出 histfold.html。",
+          "en": "Run histfold fold in the demo repository: 212 commits fold into 9 changesets, and histfold.html is written."
+        },
+        "command": "histfold fold",
+        "output": "212 commits → 9 changesets\n22 files touched, +212/-0\n\nINTENT                                       AGENT   MODEL              FILES  REVIEW   CONF  COMMITS\nAdd cursor pagination to the user list API   Claude  claude-sonnet-4-5  3      on-main  90%   28\nFix the timezone bug in report exports       Claude  claude-sonnet-4-5  2      on-main  90%   30\nAdd rate limiting middleware                 Claude  claude-opus-4-6    3      on-main  90%   26\nRefactor config loading into one package     Claude  claude-sonnet-4-5  3      on-main  90%   22\nAdd a CSV export endpoint                    Claude  claude-haiku-4-5   2      on-main  90%   28\nFix the N+1 query on the dashboard           Claude  claude-opus-4-6    2      on-main  90%   18\nAdd request tracing to the API handlers      Claude  claude-sonnet-4-5  2      on-main  90%   20\ncache: inline lookups                        Codex   codex-max          1      on-main  50%   12\nMigrate handler tests to table-driven style  Claude  claude-sonnet-4-5  4      branch   70%   28\n\nconfidence: 90% session+paths · 70% session time · 50% trailers · 20% time gaps\n\nwrote /tmp/hf-demo/histfold.html — open it in a browser to browse the timeline",
+        "image": "/assets/presentation/demo-0-light.svg",
+        "imageDark": "/assets/presentation/demo-0-dark.svg"
+      },
+      {
+        "label": {
+          "zh": "脚本化输出",
+          "en": "Machine-readable output"
+        },
+        "body": {
+          "zh": "--json 把变更集以 JSON 打到 stdout，便于脚本与管道消费。",
+          "en": "--json prints the changesets as JSON on stdout for scripts and pipelines."
+        },
+        "command": "histfold fold --json | head -n 5",
+        "output": "[\n  {\n    \"ID\": \"bb6d2c3e8b76\",\n    \"Intent\": \"Add cursor pagination to the user list API\",\n    \"Agent\": \"Claude\",",
+        "image": "/assets/presentation/demo-1-light.svg",
+        "imageDark": "/assets/presentation/demo-1-dark.svg"
+      },
+      {
+        "label": {
+          "zh": "查看原始素材",
+          "en": "Inspect the raw material"
+        },
+        "body": {
+          "zh": "histfold commits 打印归一化提交流：哈希、时间、作者、文件，以及每条提交里识别出的 Agent 归因。",
+          "en": "histfold commits prints the normalized commit stream: hash, time, author, files, and the agent attribution detected in each message."
+        },
+        "command": "histfold commits | head -n 10",
+        "output": "HASH      TIME              AUTHOR       FILES  +/-    AGENT   VIA\nad11750d  2026-10-12 18:54  Demo Author  1      +1/-0  Claude  co-authored-by\n6531f343  2026-10-12 18:53  Demo Author  1      +1/-0  Claude  co-authored-by\n811ea81b  2026-10-12 18:52  Demo Author  1      +1/-0  Claude  co-authored-by\nceb3adf3  2026-10-12 18:51  Demo Author  1      +1/-0  Claude  co-authored-by\n161b8f51  2026-10-12 18:50  Demo Author  1      +1/-0  -       -\n6868e8a4  2026-10-12 18:49  Demo Author  1      +1/-0  Claude  co-authored-by\n19174450  2026-10-12 18:48  Demo Author  1      +1/-0  Claude  co-authored-by\n54df4293  2026-10-12 18:47  Demo Author  1      +1/-0  Claude  co-authored-by\n71e54b6e  2026-10-12 18:46  Demo Author  1      +1/-0  Claude  co-authored-by",
+        "image": "/assets/presentation/demo-2-light.svg",
+        "imageDark": "/assets/presentation/demo-2-dark.svg"
+      }
+    ]
+  },
+  "quickstart": {
+    "title": {
+      "zh": "从安装到第一次折叠",
+      "en": "From install to first fold"
+    },
+    "body": {
+      "zh": "安装需要 Go 1.24+（或从 Releases 下载预编译二进制），PATH 中需要 git 2.30+，支持 macOS 和 Linux。没有会话日志的仓库照样能折叠：Agent trailer 和时间间隔聚类会接手，只是置信度更低。",
+      "en": "Installing needs Go 1.24+ (or grab a prebuilt binary from Releases), git 2.30+ on PATH, macOS or Linux. Repos without session logs still fold: agent trailers and time-gap clustering take over, at lower confidence."
+    },
+    "steps": [
+      {
+        "title": {
+          "zh": "安装",
+          "en": "Install"
+        },
+        "code": "go install github.com/SuperMarioYL/histfold@latest"
+      },
+      {
+        "title": {
+          "zh": "折叠当前仓库",
+          "en": "Fold your repository"
+        },
+        "code": "cd your-repo\nhistfold fold\nopen histfold.html"
+      },
+      {
+        "title": {
+          "zh": "运行确定性演示",
+          "en": "Run the deterministic demo"
+        },
+        "code": "git clone https://github.com/SuperMarioYL/histfold\ncd histfold\ndemo/seed.sh\ncd histfold-demo\nhistfold fold"
+      }
+    ]
+  },
+  "limitations": [
+    {
+      "zh": "v0.1 只适配 Claude Code 会话日志；其他 Agent 运行时仅靠 trailer 和时间间隔折叠，置信度更低。",
+      "en": "v0.1 adapts Claude Code session logs only; other agent runtimes fold on trailers and time gaps at lower confidence."
+    },
+    {
+      "zh": "折叠是单人模式：它关联的是本机上能找到的会话日志；团队仓库的跨贡献者折叠还在路线图上。",
+      "en": "Folding is single-player by design: it correlates session logs found on the local machine. Cross-contributor folding for team repos is roadmap."
+    },
+    {
+      "zh": "v0.1 仅支持 macOS 和 Linux，没有 Windows 构建。",
+      "en": "v0.1 is macOS and Linux only; there are no Windows builds."
+    },
+    {
+      "zh": "演示仓库是 demo/seed.sh 生成的合成数据；212 → 9 是那次实录运行的结果，不是对你仓库效果的承诺。",
+      "en": "The demo repository is synthetic data from demo/seed.sh; 212 commits → 9 changesets is that recorded run's result, not a promise about your repository."
+    }
+  ],
+  "footer": {
+    "tag": "v0.1.0 · Go 1.24 · macOS / Linux · MIT"
+  }
+}

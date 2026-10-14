@@ -1,0 +1,38 @@
+{
+  "mode": "auto",
+  "id": "d056e6-e76ab7-d0acf6-06806248da20",
+  "identity": "https://github.com/supermarioyl/histfold",
+  "primary": "#d056e6",
+  "secondary": "#e76ab7",
+  "highlight": "#d0acf6",
+  "dark": {
+    "bg": "#090712",
+    "panel": "#12101f",
+    "code": "#120d1d",
+    "ink": "#f6eefd",
+    "muted": "#ae9cc4",
+    "line": "#351841",
+    "primary": "#d056e6",
+    "secondary": "#e76ab7",
+    "highlight": "#d0acf6",
+    "accent": "#d056e6",
+    "buttonStart": "#b249c5",
+    "buttonEnd": "#b65491",
+    "buttonText": "#ffffff"
+  },
+  "light": {
+    "bg": "#fdf9fe",
+    "panel": "#fdf7fe",
+    "code": "#fcf3fd",
+    "ink": "#241630",
+    "muted": "#6e5e88",
+    "line": "#f0cbf7",
+    "primary": "#aa46bb",
+    "secondary": "#ad5089",
+    "highlight": "#7e6895",
+    "accent": "#aa46bb",
+    "buttonStart": "#b249c5",
+    "buttonEnd": "#b65491",
+    "buttonText": "#ffffff"
+  }
+}
