@@ -96,8 +96,8 @@ func TestParseClaudeSessionEmpty(t *testing.T) {
 
 func TestClaudeProjectSlug(t *testing.T) {
 	tests := []struct{ path, want string }{
-		{"/Users/yulei/workspace/ai-radar", "-Users-yulei-workspace-ai-radar"},
-		{"/Users/yulei/.claude/worktrees/Genet-suspicious-taussig", "-Users-yulei--claude-worktrees-Genet-suspicious-taussig"},
+		{"/Users/me/projects/ai-tools", "-Users-me-projects-ai-tools"},
+		{"/Users/me/.claude/worktrees/Genet-suspicious-taussig", "-Users-me--claude-worktrees-Genet-suspicious-taussig"},
 		{"/tmp/demo repo", "-tmp-demo-repo"},
 	}
 	for _, tt := range tests {
