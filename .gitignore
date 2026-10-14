@@ -1,0 +1,29 @@
+# build scratch
+PUBLISH_BLOCKED.md
+BUILD_SETUP_NEXT_STEPS.md
+.spawn.*
+.builder_*
+.build_metadata*
+.stage_*
+_build_*
+
+# editor/assistant local files
+.claude/
+CLAUDE.md
+
+# go
+/histfold
+*.test
+coverage.out
+
+# generated fold output
+/histfold.html
+
+# local demo repo
+/histfold-demo/
+
+# release staging
+/dist/
+
+# OS noise
+.DS_Store
