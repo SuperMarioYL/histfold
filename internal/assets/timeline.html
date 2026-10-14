@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Histfold timeline{{if .Repo}} — {{.Repo}}{{end}}</title>
+<style>
+:root {
+  --bg: #f6f7f9; --panel: #ffffff; --ink: #1a1f27; --muted: #5b6472;
+  --line: #dfe3ea; --accent: #2456c4; --accent-soft: #e8eefc;
+  --good: #1a7f4b; --good-soft: #e2f4ea; --warn: #9a6700; --warn-soft: #fdf3d8;
+  --low: #57606a; --low-soft: #eceff3; --add: #1a7f4b; --del: #c2372f;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #12151a; --panel: #1a1f27; --ink: #e6e9ee; --muted: #98a1af;
+    --line: #2b323d; --accent: #7ea4f0; --accent-soft: #22304f;
+    --good: #4cc38a; --good-soft: #16342a; --warn: #d9a53f; --warn-soft: #3a2f14;
+    --low: #98a1af; --low-soft: #262c36; --add: #4cc38a; --del: #ef7b72;
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+main { max-width: 960px; margin: 0 auto; padding: 32px 20px 64px; }
+.head h1 { margin: 0; font-size: 22px; letter-spacing: -0.01em; }
+.head .sub { margin: 6px 0 0; color: var(--muted); }
+.repo { color: var(--accent); font-weight: 600; }
+.controls { margin-top: 14px; display: flex; gap: 8px; }
+button {
+  font: inherit; color: var(--ink); background: var(--panel);
+  border: 1px solid var(--line); border-radius: 6px; padding: 4px 12px; cursor: pointer;
+}
+button:hover { border-color: var(--accent); color: var(--accent); }
+.timeline { list-style: none; margin: 24px 0 0; padding: 0; }
+.card { display: flex; gap: 14px; }
+.rail { display: flex; flex-direction: column; align-items: center; width: 12px; }
+.dot {
+  width: 10px; height: 10px; margin-top: 12px; border-radius: 50%;
+  background: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.card.open .dot { background: var(--good); box-shadow: 0 0 0 3px var(--good-soft); }
+.body {
+  flex: 1; min-width: 0; margin-bottom: 14px; background: var(--panel);
+  border: 1px solid var(--line); border-radius: 10px;
+}
+.cardhead {
+  display: flex; width: 100%; gap: 10px; align-items: baseline; justify-content: space-between;
+  border: 0; background: none; padding: 12px 16px 4px; text-align: left; cursor: pointer; border-radius: 10px;
+}
+.cardhead:hover .intent { color: var(--accent); }
+.intent {
+  font-weight: 600; font-size: 15px; min-width: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.chips { display: flex; gap: 6px; flex: none; flex-wrap: wrap; justify-content: flex-end; }
+.chip {
+  font-size: 11.5px; padding: 1px 8px; border-radius: 999px; white-space: nowrap;
+  background: var(--low-soft); color: var(--low);
+}
+.chip.agent { background: var(--accent-soft); color: var(--accent); }
+.review-on-main { background: var(--good-soft); color: var(--good); }
+.review-branch { background: var(--accent-soft); color: var(--accent); }
+.review-unknown { background: var(--low-soft); color: var(--low); }
+.conf-high { background: var(--good-soft); color: var(--good); }
+.conf-medium { background: var(--warn-soft); color: var(--warn); }
+.conf-low { background: var(--low-soft); color: var(--low); }
+.meta { margin: 0; padding: 0 16px 12px; color: var(--muted); font-size: 12.5px; }
+.meta code { font-size: 11.5px; }
+.adds { color: var(--add); }
+.dels { color: var(--del); }
+.details { border-top: 1px solid var(--line); padding: 12px 16px 16px; }
+.details h2 {
+  margin: 12px 0 6px; font-size: 12px; text-transform: uppercase;
+  letter-spacing: 0.06em; color: var(--muted);
+}
+.details h2:first-child { margin-top: 0; }
+.details ul { list-style: none; margin: 0; padding: 0; }
+.details li {
+  display: flex; justify-content: space-between; gap: 12px; padding: 3px 0;
+  border-bottom: 1px dashed var(--line); font-size: 13px;
+}
+.details li:last-child { border-bottom: 0; }
+.details code { font: 12px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+.hash { color: var(--accent); }
+.ctime, .cauthor { color: var(--muted); flex: none; }
+.csubject { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.counts { flex: none; }
+footer { margin-top: 28px; color: var(--muted); font-size: 12.5px; }
+footer p { margin: 2px 0; }
+</style>
+</head>
+<body>
+<main>
+  <header class="head">
+    <h1>Histfold timeline</h1>
+    <p class="sub">
+      {{if .Repo}}<span class="repo">{{.Repo}}</span> · {{end}}{{.Commits}} commits folded into {{.Changesets}} changesets
+      · generated {{.Generated}} · read-only view
+    </p>
+    <div class="controls">
+      <button type="button" data-action="expand">Expand all</button>
+      <button type="button" data-action="collapse">Collapse all</button>
+    </div>
+  </header>
+  <ol class="timeline">
+    {{range .Cards}}
+    <li class="card" data-card>
+      <div class="rail"><span class="dot"></span></div>
+      <div class="body">
+        <button type="button" class="cardhead" data-toggle aria-expanded="false">
+          <span class="intent" title="{{.Intent}}">{{.Intent}}</span>
+          <span class="chips">
+            {{if .Agent}}<span class="chip agent">{{.Agent}}{{if .Model}} · {{.Model}}{{end}}</span>{{end}}
+            <span class="chip review-{{.Review}}">{{.Review}}</span>
+            <span class="chip conf-{{.ConfLevel}}">fold {{.Confidence}}</span>
+          </span>
+        </button>
+        <p class="meta">
+          {{.When}} · {{.Commits}} commits · {{.Files}} files ·
+          <span class="adds">+{{.Adds}}</span>/<span class="dels">-{{.Dels}}</span>{{if .SessionRef}}
+          · session <code>{{.SessionRef}}</code>{{end}}
+        </p>
+        <div class="details" hidden>
+          <h2>Files</h2>
+          <ul>
+            {{range .FileRows}}<li><code>{{.Path}}</code><span class="counts"><span class="adds">+{{.Added}}</span> <span class="dels">-{{.Deleted}}</span></span></li>{{end}}
+          </ul>
+          <h2>Raw commits</h2>
+          <ul>
+            {{range .CommitRows}}
+            <li>
+              <code class="hash">{{.Hash}}</code>
+              <span class="ctime">{{.When}}</span>
+              <span class="cauthor">{{.Author}}</span>
+              <span class="csubject">{{.Subject}}</span>
+              <span class="counts"><span class="adds">+{{.Adds}}</span> <span class="dels">-{{.Dels}}</span></span>
+            </li>
+            {{end}}
+          </ul>
+        </div>
+      </div>
+    </li>
+    {{end}}
+  </ol>
+  <footer>
+    <p>Folded by histfold — changesets are a view over the raw history; nothing in the repository was modified.</p>
+    <p>{{.ConfLegend}}</p>
+  </footer>
+</main>
+<script>
+(function () {
+  function apply(card, open) {
+    card.classList.toggle('open', open);
+    card.querySelector('.details').hidden = !open;
+    card.querySelector('[data-toggle]').setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+  document.addEventListener('click', function (event) {
+    var toggle = event.target.closest('[data-toggle]');
+    if (toggle) {
+      var card = toggle.closest('[data-card]');
+      apply(card, !card.classList.contains('open'));
+      return;
+    }
+    var action = event.target.closest('[data-action]');
+    if (action) {
+      var open = action.getAttribute('data-action') === 'expand';
+      document.querySelectorAll('[data-card]').forEach(function (card) { apply(card, open); });
+    }
+  });
+})();
+</script>
+</body>
+</html>
